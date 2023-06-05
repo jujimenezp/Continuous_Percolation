@@ -7,4 +7,4 @@ set xrange [0:L]
 set yrange [0:L]
 
 set o 'data.pdf'
-plot 'results.dat' u 1:2 pt 6 ps 6 title ''
+plot 'results.dat' u 1:2 pt 6  title ''
