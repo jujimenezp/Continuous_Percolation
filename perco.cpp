@@ -8,7 +8,8 @@ int main(int argc, char** argv){
     Percolacion perc(L,t_end,R);
 
     perc.create_system(ran64);
-    perc.find_t_cluster();
+    perc.find_clusters();
+    perc.find_roots();
     perc.print_system("results.dat");
     return 0;
 }

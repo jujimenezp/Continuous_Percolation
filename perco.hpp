@@ -13,12 +13,15 @@ class Percolacion{
         const double R;
         std::vector<double> b;
         std::vector<int> clusters;
+        std::vector<int> id;
     public:
         Percolacion(const int Li, const int t_endi, const double Ri) :
-            L(Li), L2(L*L), t_end(t_endi), R(Ri) {}
+            L(Li), L2(L*L), t_end(t_endi), R(Ri) , id(t_endi,0){}
         void create_system(Crandom &ran64);
         void print_system(std::string filename);
         void find_t_cluster();
+        void find_roots();
+        void find_clusters();
 };
 
 void  Percolacion::create_system(Crandom &ran64){
@@ -73,18 +76,47 @@ void Percolacion::find_t_cluster(){
                 else if(clusters[j]<clusters[i]) clusters[i]=clusters[j];
                 //Reorder clusters vector
                 vec_aux=clusters[j];
-                clusters[j]=clusters[i+reorder_carry];
+                clusters[j]=clusters[i+reorder_carry+1];
+                clusters[i+reorder_carry+1]=clusters[i+reorder_carry];
                 clusters[i+reorder_carry]=vec_aux;
                 //Reorder b vector
-                vec_aux=b[2*j]; b[2*j]=b[2*(i+reorder_carry)]; b[2*(i+reorder_carry)]=vec_aux;
-                vec_aux=b[2*j+1]; b[2*j+1]=b[2*(i+reorder_carry)+1]; b[2*(i+reorder_carry)+1]=vec_aux;
+                vec_aux=b[2*j]; b[2*j]=b[2*(i+reorder_carry+1)]; b[2*(i+reorder_carry+1)]=b[2*(i+reorder_carry)] ;b[2*(i+reorder_carry)]=vec_aux;
+                vec_aux=b[2*j+1]; b[2*j+1]=b[2*(i+reorder_carry+1)+1]; b[2*(i+reorder_carry+1)+1]=b[2*(i+reorder_carry)+1];b[2*(i+reorder_carry)+1]=vec_aux;
                 reorder_carry++;
+                //std::cout << "i: "<<i <<" j: "<<j <<" cluster: "<<clusters[i]<<" r_c: "<< reorder_carry <<std::endl;
             }
         }
     }
     for(auto const &i: clusters){
         std::cout << i << std::endl;
     }
+}
+
+void Percolacion::find_clusters(){
+    id[0]=1;
+    double s,x1,y1,x2,y2,R2=2*R;
+    for(int i=0;i < t_end;i++){
+        x1=b[2*i], y1=b[2*i+1];
+        if(id[i]==0) id[i]=i+1;
+        for(int j=i+1;j < t_end;j++){
+            x2=b[2*j], y2=b[2*j+1];
+            // Measure distance between circles i and j
+            s = sqrt(pow(x1-x2,2)+pow(y1-y2,2));
+            if(s <= R2 && id[j]==0) id[j]=i+1;
+        }
+    }
+}
+
+void Percolacion::find_roots(){
+    //for(int i=0;i < t_end;i++){
+    int i=3;
+        int element=i+1;
+        while(element != id[element-1]){
+            element=id[element-1];
+        }
+        std::cout <<"i: "<<i << " id: "<< id[i] << " root: " << element <<std::endl;;
+        clusters[i]=element;
+    //}
 }
 
 #endif // PERCO_H_

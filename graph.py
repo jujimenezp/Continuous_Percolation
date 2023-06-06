@@ -18,5 +18,6 @@ ax.set_ylim((0,50))
 for i in range(len(data['center'])):
     circle.append(plt.Circle(data.at[i, 'center'],3,color='blue',fill=False))
     ax.add_patch(circle[i])
+    plt.text(data.at[i,'x'], data.at[i,'y'], str(data.at[i,'cluster']), ha='center', va='center')
 ax.set_aspect('equal')
 plt.savefig('data.pdf', format='pdf', bbox_inches='tight')
