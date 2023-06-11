@@ -105,6 +105,8 @@ void Percolacion::join(int p_i, int p_j, int t){
     }
     check_up[p_i] = check_up[p_i] || check_up[p_j];
     check_down[p_i] = check_down[p_i] || check_down[p_j];
+    check_left[p_i] = check_left[p_i] || check_left[p_j];
+    check_right[p_i] = check_right[p_i] || check_right[p_j];
 }
 
 int Percolacion::t_percolante(){
@@ -123,7 +125,6 @@ int Percolacion::t_percolante(){
         if(percolante==true) b=t;
         else a=t;
         t=(a+b)/2;
-        std::cout << "t="<<t <<" a="<<a <<" b="<<b<<std::endl;
     }
     this->reset_clusters();
     this->find_papas(t);
