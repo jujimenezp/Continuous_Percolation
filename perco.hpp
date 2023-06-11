@@ -11,39 +11,42 @@ class Percolacion{
     private:
         const int L, L2, t_end;
         const double R,D;
+        bool percolante;
         std::vector<double> b;
-        std::vector<int> clusters;
-        std::vector<int> id;
         std::vector<int> papas;
+        std::vector<bool> check_up;
+        std::vector<bool> check_down;
+        std::vector<bool> check_left;
+        std::vector<bool> check_right;
     public:
         Percolacion(const int Li, const int t_endi, const double Ri) :
-            L(Li), L2(L*L), t_end(t_endi), R(Ri), D(2*Ri) , id(t_endi,-1), papas(t_end,-1){}
+            L(Li), L2(L*L), t_end(t_endi), R(Ri), D(2*Ri), percolante(false),
+            papas(t_endi,-1), check_up(t_endi,false), check_down(t_endi,false),
+            check_left(t_endi,false), check_right(t_endi,false){}
         void create_system(Crandom &ran64);
-        void print_system(std::string filename);
+        void print_system(std::string filename,int t);
         int find(int i);
-        void find_papas();
-        void merge();
-        void join(int p_i, int p_j);
+        void find_papas(int t);
+        void merge(int t);
+        void join(int p_i, int p_j,int t);
+        int t_percolante();
+        void check_percolancia(int i);
+        void reset_clusters();
 
 };
 
 void  Percolacion::create_system(Crandom &ran64){
     //b will save x(even),y(odd) coordinates for every circle
-    // b.push_back(20); b.push_back(5);
-    // b.push_back(10); b.push_back(25);
     for(int i=0; i < t_end; i++){
         b.push_back(L*ran64.r()); //x
         b.push_back(L*ran64.r()); //y
-        // b.push_back(35-5*i);
-        // b.push_back(25);
     }
-    clusters.resize(b.size()/2,0);
 }
 
-void Percolacion::print_system(std::string filename){
+void Percolacion::print_system(std::string filename, int t){
     std::ofstream file(filename);
     file << "x\t" <<"y\t" << "cluster" <<std::endl;
-    for(int i=0; i < b.size(); i+=2){
+    for(int i=0; i < 2*t; i+=2){
         file << b[i] << "\t" << b[i+1] <<"\t"<<papas[i/2]<<std::endl;
     }
     file.close();
@@ -72,32 +75,90 @@ int Percolacion::find(int i){
     return papa;
 }
 
-void Percolacion::find_papas(){
-    for(int i=0;i < t_end;i++){
+void Percolacion::find_papas(int t){
+    for(int i=0;i < t;i++){
         papas[i]=find(i);
+        this->check_percolancia(i);
     }
 }
 
-void Percolacion::merge(){
-    double s,x1,y1,x2,y2,R2=2*R;
-    for(int i=0;i < t_end;i++){
+void Percolacion::merge(int t){
+    double s,x1,y1,x2,y2;
+    for(int i=0;i < t;i++){
         x1=b[2*i], y1=b[2*i+1];
-        for(int j=i+1; j < t_end; j++){
+        for(int j=i+1; j < t; j++){
             x2=b[2*j], y2=b[2*j+1];
             // Measure distance between circles i and j
             s = sqrt(pow(x1-x2,2)+pow(y1-y2,2));
             if(s <= D){
-                if(papas[i] > papas[j]) this->join(papas[j],papas[i]);
-                else if(papas[j] > papas[i]) this->join(papas[i],papas[j]);
+                if(papas[i] > papas[j]) this->join(papas[j],papas[i],t);
+                else if(papas[j] > papas[i]) this->join(papas[i],papas[j],t);
             }
         }
+        this->check_percolancia(i);
     }
 }
 
-void Percolacion::join(int p_i, int p_j){
-    for(int k=0; k < t_end;k++){
+void Percolacion::join(int p_i, int p_j, int t){
+    for(int k=0; k < t;k++){
         if(papas[k]==p_j) papas[k]=p_i;
     }
+    check_up[p_i] = check_up[p_i] || check_up[p_j];
+    check_down[p_i] = check_down[p_i] || check_down[p_j];
+}
+
+int Percolacion::t_percolante(){
+    int t=t_end, a=0, b=t_end;
+    this->find_papas(t);
+    this->merge(t);
+    if(percolante==false){
+        std::cout << "No hay cluster percolante en el tiempo final!!\nIntento Terminado." <<std::endl;
+        return 0;
+    }
+    t=t/2;
+    while(b-a>1){
+        this->reset_clusters();
+        this->find_papas(t);
+        this->merge(t);
+        if(percolante==true) b=t;
+        else a=t;
+        t=(a+b)/2;
+        std::cout << "t="<<t <<" a="<<a <<" b="<<b<<std::endl;
+    }
+    this->reset_clusters();
+    this->find_papas(t);
+    this->merge(t);
+    if(percolante==true) return t;
+    else return t+1;
+}
+
+void Percolacion::check_percolancia(int i){
+     if(b[2*i+1]+R>=L) check_up[papas[i]]=true;
+     if(b[2*i+1]<R) check_down[papas[i]]=true;
+     if(b[2*i]+R>=L) check_right[papas[i]]=true;
+     if(b[2*i]<R) check_left[papas[i]]=true;
+     if(check_up[papas[i]] && check_down[papas[i]]){
+         // std::cout << "Cluster percolante! " << "\n"
+         //           << "Cluster: " << papas[i] <<std::endl;
+         percolante=true;
+         return;
+     }
+     if(check_right[papas[i]] && check_left[papas[i]]){
+         // std::cout << "Cluster percolante! " << "\n"
+         //           << "Cluster: " << papas[i] <<std::endl;
+         percolante=true;
+         return;
+     }
+     return;
+}
+
+void Percolacion::reset_clusters(){
+    percolante=false;
+    std::fill(check_up.begin(),check_up.end(),false);
+    std::fill(check_down.begin(),check_down.end(),false);
+    std::fill(check_left.begin(),check_left.end(),false);
+    std::fill(check_right.begin(),check_right.end(),false);
+    std::fill(papas.begin(),papas.end(),-1);
 }
 
 #endif // PERCO_H_
