@@ -1,4 +1,7 @@
 *.x
 *.pdf
+*.png
+*.jpg
+*.jpeg
 *.dat
 .ccls-cache*

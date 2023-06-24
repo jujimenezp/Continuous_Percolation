@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -32,6 +33,8 @@ class Percolacion{
         int t_percolante();
         void check_percolancia(int i);
         void reset_clusters();
+        std::vector<double> get_b(){return b;}
+        void b_resize(int t_perc){b.resize(t_perc);};
 
 };
 
@@ -130,7 +133,11 @@ int Percolacion::t_percolante(){
     this->find_papas(t);
     this->merge(t);
     if(percolante==true) return t;
-    else return t+1;
+    else{
+        this->find_papas(t+1);
+        this->merge(t+1);
+        return t+1;
+    }
 }
 
 void Percolacion::check_percolancia(int i){
