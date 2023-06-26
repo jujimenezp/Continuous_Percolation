@@ -34,8 +34,6 @@ class Percolacion{
         void check_percolancia(int i);
         void reset_clusters();
         std::vector<double> get_b(){return b;}
-        void b_resize(int t_perc){b.resize(t_perc);};
-
 };
 
 void  Percolacion::create_system(Crandom &ran64){

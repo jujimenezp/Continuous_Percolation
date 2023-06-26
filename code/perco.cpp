@@ -6,33 +6,45 @@ int main(int argc, char** argv){
     const double R=4;
     const int L=50;
     const int N=2000;
-    int t_perc;
-    Crandom ran64(stoi(argv[1]));
-    Percolacion perc(L,t_end,R);
-    Monte_Carlo_Integral Area(L,R,N);
+    const int seeds = stoi(argv[1]);
+    int t_perc, counter;
+    double prop;
+    Crandom ran64(1);
+    //Percolacion perc(L,t_end,R);
+    Percolacion *perc;
+    Monte_Carlo_Integral *Area;
+    //Monte_Carlo_Integral Area(L,R,N);
 
-    perc.create_system(ran64);
+    std::ofstream areas("results/areas_"+to_string(L)+".dat");
+    areas << "seed" <<"\t"<<"Area"<<std::endl;
 
-    t_perc=perc.t_percolante();
-    std::cout << "Cluster percolante en t=" <<t_perc <<std::endl;
+    for(int s=0;s < seeds; s++){
+        std::cout << "Semilla: "<< s <<"\r";
+        ran64 = Crandom(s);
+        counter = 0;
+        perc = new Percolacion(L,t_end,R);
+        Area = new Monte_Carlo_Integral(L,R,N);
 
-    //perc.b_resize(t_perc);
-    perc.print_system("results/results.dat", t_perc);
+        perc->create_system(ran64);
+        t_perc=perc->t_percolante();
+        //std::cout << "Cluster percolante en t=" <<t_perc <<std::endl;
 
-    int counter;
-    counter = Area.mci(perc.get_b(),t_perc);
-    std::cout << "phi_eff=" << double(counter)/double(N) << "\n"
-              << "Area=" << double(counter*L*L)/double(N);
-    Area.print(perc.get_b(),t_perc,"results/mci_circles.dat","results/mci_points.dat");
 
-    // perc.reset_clusters();
-    // perc.find_papas(t_perc);
-    // perc.merge(t_perc);
-    // perc.print_system("results/hay.dat",t_perc);
+        counter = Area->mci(perc->get_b(), t_perc);
+        prop = double(counter)/double(N);
 
-    // perc.reset_clusters();
-    // perc.find_papas(t_perc-1);
-    // perc.merge(t_perc-1);
-    // perc.print_system("results/no_hay.dat",t_perc-1);
+        // std::cout << "phi_eff=" << prop << "\n"
+        //           << "Area=" << prop*L*L << "\n";
+
+        areas << s <<"\t" << prop*L*L <<std::endl;
+
+        delete Area;
+        delete perc;
+    }
+
+    //perc->print_system("results/results_"+to_string(L)+".dat", t_perc);
+    //Area->print(perc->get_b(),t_perc,"results/mci_circles.dat","results/mci_points.dat");
+    areas.close();
+
     return 0;
 }
