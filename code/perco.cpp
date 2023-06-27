@@ -15,20 +15,21 @@ int main(int argc, char** argv){
     Crandom *ran64;
     //Percolacion perc(L,t_end,R);
     //Monte_Carlo_Integral Area(L,R,N);
-    Percolacion *perc;
-    Monte_Carlo_Integral *Area;
+    Percolacion3D *perc;
+    Monte_Carlo_Integral3D *Volume;
 
     for (int i=0; i < sizeof(Ls)/sizeof(Ls[0]); i++){
         std::cout << "\nL=" << Ls[i] << '\n';
 
-        std::ofstream areas("results/areas_"+to_string(Ls[i])+".dat");
-        areas << "seed" <<"\t"<<"Area"<<'\n';
+        std::ofstream volumes("results/volumes_"+to_string(Ls[i])+".dat");
+        volumes << "seed" <<"\t"<<"Volume"<<'\n';
 
         for(int s=0;s < seeds; s++){
-            std::cout << "Semilla: "<< s <<"\r";
+            std::cout << '\r' << string(string("Semilla:  ").size(), ' ');
+            std::cout <<"\r" << "Semilla: "<< s;
 
-            perc = new Percolacion(Ls[i],t_end,R);
-            Area = new Monte_Carlo_Integral(Ls[i],R,Ns[i]);
+            perc = new Percolacion3D(Ls[i],t_end,R);
+            Volume = new Monte_Carlo_Integral3D(Ls[i],R,Ns[i]);
             ran64 = new Crandom(s);
 
             perc->create_system(*ran64);
@@ -36,23 +37,23 @@ int main(int argc, char** argv){
             //std::cout << "Cluster percolante en t=" <<t_perc <<std::endl;
 
 
-            counter = Area->mci(perc->get_b(), t_perc);
+            counter = Volume->mci(perc->get_b(), t_perc);
             prop = double(counter)/double(Ns[i]);
 
             // std::cout << "phi_eff=" << prop << "\n"
             //           << "Area=" << prop*Ls[i]*Ls[i] << "\n";
 
-            areas << s <<"\t" << prop <<'\n';
+            volumes << s <<"\t" << prop <<'\n';
 
             //perc->print_system("results/results_"+to_string(Ls[i])+".dat", t_perc);
             //Area->print(perc->get_b(),t_perc,"results/mci_circles.dat","results/mci_points.dat");
 
             delete ran64;
-            delete Area;
+            delete Volume;
             delete perc;
         }
 
-        areas.close();
+        volumes.close();
     }
 
     return 0;
