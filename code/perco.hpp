@@ -17,13 +17,11 @@ class Percolacion{
         std::vector<int> papas;
         std::vector<bool> check_up;
         std::vector<bool> check_down;
-        std::vector<bool> check_left;
-        std::vector<bool> check_right;
+
     public:
         Percolacion(const int Li, const int t_endi, const double Ri) :
             L(Li), L2(L*L), t_end(t_endi), R(Ri), D(2*Ri), percolante(false),
-            papas(t_endi,-1), check_up(t_endi,false), check_down(t_endi,false),
-            check_left(t_endi,false), check_right(t_endi,false){}
+            papas(t_endi,-1), check_up(t_endi,false), check_down(t_endi,false){}
         void create_system(Crandom &ran64);
         void print_system(std::string filename,int t);
         int find(int i);
@@ -106,8 +104,6 @@ void Percolacion::join(int p_i, int p_j, int t){
     }
     check_up[p_i] = check_up[p_i] || check_up[p_j];
     check_down[p_i] = check_down[p_i] || check_down[p_j];
-    check_left[p_i] = check_left[p_i] || check_left[p_j];
-    check_right[p_i] = check_right[p_i] || check_right[p_j];
 }
 
 int Percolacion::t_percolante(){
@@ -141,15 +137,7 @@ int Percolacion::t_percolante(){
 void Percolacion::check_percolancia(int i){
      if(b[2*i+1]+R>=L) check_up[papas[i]]=true;
      if(b[2*i+1]<R) check_down[papas[i]]=true;
-     if(b[2*i]+R>=L) check_right[papas[i]]=true;
-     if(b[2*i]<R) check_left[papas[i]]=true;
      if(check_up[papas[i]] && check_down[papas[i]]){
-         // std::cout << "Cluster percolante! " << "\n"
-         //           << "Cluster: " << papas[i] <<std::endl;
-         percolante=true;
-         return;
-     }
-     if(check_right[papas[i]] && check_left[papas[i]]){
          // std::cout << "Cluster percolante! " << "\n"
          //           << "Cluster: " << papas[i] <<std::endl;
          percolante=true;
@@ -162,8 +150,6 @@ void Percolacion::reset_clusters(){
     percolante=false;
     std::fill(check_up.begin(),check_up.end(),false);
     std::fill(check_down.begin(),check_down.end(),false);
-    std::fill(check_left.begin(),check_left.end(),false);
-    std::fill(check_right.begin(),check_right.end(),false);
     std::fill(papas.begin(),papas.end(),-1);
 }
 

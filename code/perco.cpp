@@ -1,27 +1,29 @@
 #include "perco.hpp"
 #include "monte_carlo_integral.hpp"
 
+
 int main(int argc, char** argv){
     const int t_end=stoi(argv[2]);
     const double R=3;
     //const int L=135;
     int Ls[] = {45, 60, 75, 90, 120, 135};
     //int Ls[] = {120};
-    const int Ns[] = {1800, 2000, 5000, 6000, 1000, 18000};
+    const int Ns[] = {450*45, 600*60, 750*75, 900*90, 1200*120, 1350*135};
     const int seeds = stoi(argv[1]);
     int t_perc, counter;
     double prop;
     Crandom *ran64;
     //Percolacion perc(L,t_end,R);
+    //Monte_Carlo_Integral Area(L,R,N);
     Percolacion *perc;
     Monte_Carlo_Integral *Area;
-    //Monte_Carlo_Integral Area(L,R,N);
 
     for (int i=0; i < sizeof(Ls)/sizeof(Ls[0]); i++){
-        std::cout << "L=" << Ls[i] << std::endl;
+        std::cout << "\nL=" << Ls[i] << '\n';
 
         std::ofstream areas("results/areas_"+to_string(Ls[i])+".dat");
-        areas << "seed" <<"\t"<<"Area"<<std::endl;
+        areas << "seed" <<"\t"<<"Area"<<'\n';
+
         for(int s=0;s < seeds; s++){
             std::cout << "Semilla: "<< s <<"\r";
 
@@ -40,10 +42,10 @@ int main(int argc, char** argv){
             // std::cout << "phi_eff=" << prop << "\n"
             //           << "Area=" << prop*Ls[i]*Ls[i] << "\n";
 
-            areas << s <<"\t" << prop*Ls[i]*Ls[i] <<std::endl;
+            areas << s <<"\t" << prop <<'\n';
 
             //perc->print_system("results/results_"+to_string(Ls[i])+".dat", t_perc);
-            Area->print(perc->get_b(),t_perc,"results/mci_circles.dat","results/mci_points.dat");
+            //Area->print(perc->get_b(),t_perc,"results/mci_circles.dat","results/mci_points.dat");
 
             delete ran64;
             delete Area;

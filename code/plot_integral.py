@@ -11,8 +11,8 @@ fig, ax = plt.subplots()
 
 ax.set_xlabel('x')
 ax.set_ylabel('y')
-ax.set_xlim((0,50))
-ax.set_ylim((0,50))
+ax.set_xlim((0,135))
+ax.set_ylim((0,135))
 
 t = np.linspace(0, 2*np.pi, 50)
 # Plot circles
@@ -26,7 +26,7 @@ for idx in range(len(circles[0])):
     ax.plot(u, v, 'k-')
 
 # Plot points
-ax.scatter(points[0], points[1], s=3, c='red')
+ax.scatter(points[0], points[1], s=0.2, c='red')
 plt.gca().set_aspect('equal')
 plt.savefig('results/integral.pdf',format='pdf',bbox_inches='tight')
 
