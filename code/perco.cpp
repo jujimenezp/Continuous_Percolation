@@ -6,9 +6,9 @@ int main(int argc, char** argv){
     const int t_end=stoi(argv[2]);
     const double R=3;
     //const int L=135;
-    int Ls[] = {120};
+    int Ls[] = {45, 60, 75, 90, 120, 135};
     //int Ls[] = {120};
-    const int Ns[] = {1200*120};
+    const int Ns[] = {450*45, 600*60, 750*75, 900*90, 1200*120, 1350*135};
     const int seeds = stoi(argv[1]);
     int t_perc, counter;
     double prop;
