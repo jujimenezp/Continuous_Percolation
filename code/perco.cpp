@@ -6,9 +6,9 @@ int main(int argc, char** argv){
     const int t_end=stoi(argv[2]);
     const double R=3;
     //const int L=135;
-    int Ls[] = {45, 60};
+    int Ls[] = {135};
     //int Ls[] = {120};
-    const int Ns[] = {450*45, 600*60};
+    const int Ns[] = {1350*135};
     const int seeds = stoi(argv[1]);
     int t_perc, counter;
     double prop;
@@ -22,7 +22,7 @@ int main(int argc, char** argv){
         std::cout << "\nL=" << Ls[i] << '\n';
 
         std::ofstream areas;
-        areas.open("results/areas_"+to_string(Ls[i])+".dat", std::ios_base::app);
+        areas.open("results/areas_"+to_string(Ls[i])+"_aux.dat", std::ios_base::app);
         areas << "seed" <<"\t"<<"Area"<<'\n';
 
         for(int s=0;s < seeds; s++){

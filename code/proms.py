@@ -17,7 +17,7 @@ for L in Ls:
 res = linregress(np.log(Ls), stds)
 x = np.linspace(3.8,4.9,500)
 y = res.intercept + x*res.slope
-print(f'slope = {res.slope}')
+print(f'slope = {res.slope} +/- {res.stderr}')
 print(f'R2 = {res.rvalue}')
 
 fig, ax = plt.subplots()
