@@ -136,7 +136,7 @@ int Percolacion::t_percolante(){
 
 void Percolacion::check_percolancia(int i){
      if(b[2*i+1]+R>=L) check_up[papas[i]]=true;
-     if(b[2*i+1]<R) check_down[papas[i]]=true;
+     if(b[2*i+1]<=R) check_down[papas[i]]=true;
      if(check_up[papas[i]] && check_down[papas[i]]){
          // std::cout << "Cluster percolante! " << "\n"
          //           << "Cluster: " << papas[i] <<std::endl;

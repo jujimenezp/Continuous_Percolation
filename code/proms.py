@@ -17,7 +17,6 @@ for L in Ls:
 res = linregress(np.log(Ls), stds)
 x = np.linspace(3.8,4.9,500)
 y = res.intercept + x*res.slope
-y1 = -1+ x*0.89
 print(f'slope = {res.slope}')
 print(f'R2 = {res.rvalue}')
 
@@ -26,5 +25,4 @@ ax.set_xlabel(r'log(L)')
 ax.set_ylabel(r'-log($\Delta L$)')
 ax.scatter(np.log(Ls),stds)
 ax.plot(x,y)
-ax.plot(x,y1)
 plt.show()

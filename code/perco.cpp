@@ -6,13 +6,13 @@ int main(int argc, char** argv){
     const int t_end=stoi(argv[2]);
     const double R=3;
     //const int L=135;
-    int Ls[] = {45, 60, 75, 90, 120, 135};
+    int Ls[] = {45, 60};
     //int Ls[] = {120};
-    const int Ns[] = {450*45, 600*60, 750*75, 900*90, 1200*120, 1350*135};
+    const int Ns[] = {450*45, 600*60};
     const int seeds = stoi(argv[1]);
     int t_perc, counter;
     double prop;
-    Crandom *ran64;
+    Crandom *ran64 = new Crandom(1);
     //Percolacion perc(L,t_end,R);
     //Monte_Carlo_Integral Area(L,R,N);
     Percolacion *perc;
@@ -21,11 +21,12 @@ int main(int argc, char** argv){
     for (int i=0; i < sizeof(Ls)/sizeof(Ls[0]); i++){
         std::cout << "\nL=" << Ls[i] << '\n';
 
-        std::ofstream areas("results/areas_"+to_string(Ls[i])+".dat");
+        std::ofstream areas;
+        areas.open("results/areas_"+to_string(Ls[i])+".dat", std::ios_base::app);
         areas << "seed" <<"\t"<<"Area"<<'\n';
 
         for(int s=0;s < seeds; s++){
-            std::cout << "Semilla: "<< s <<"\r";
+            std::cout <<"\r"<< "Semilla: "<< s <<std::flush;
 
             perc = new Percolacion(Ls[i],t_end,R);
             Area = new Monte_Carlo_Integral(Ls[i],R,Ns[i]);
